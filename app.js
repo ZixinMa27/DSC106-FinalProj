@@ -7,15 +7,9 @@ function final_proj() {
     question1(filePath, filePath2);
     question2(filePath3);
     question3(filePath2);
-<<<<<<< HEAD
     question4(filePath4, filePath2);
     question5(filePath);
-    //question6(filePath);
-=======
-    //question4(filePath);
-    //question5(filePath);
     question6(filePath2);
->>>>>>> a8c7e242d30e0d73414daea0f3a1e29dda7d7d42
 }
 
 
@@ -492,7 +486,6 @@ var question5 = function (filePath) {
     var athletes = d3.csv(filePath, rowConverter)
 
     athletes.then(function (data) {
-        console.log(data)
         var height = 600;
         var width = 600;
         var margin = 50;
