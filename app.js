@@ -7,9 +7,15 @@ function final_proj() {
     question1(filePath, filePath2);
     question2(filePath3);
     question3(filePath2);
+<<<<<<< HEAD
     question4(filePath4, filePath2);
     question5(filePath);
     //question6(filePath);
+=======
+    //question4(filePath);
+    //question5(filePath);
+    question6(filePath2);
+>>>>>>> a8c7e242d30e0d73414daea0f3a1e29dda7d7d42
 }
 
 
@@ -538,6 +544,131 @@ var question5 = function (filePath) {
 
 
     })
+}
+
+var question6 = function(filePath){
+    const file = d3.csv(filePath, function(data){
+        // Russia athletes can not particiapte under russian flag, must link Russian athletes (ROC) to Russia.
+        var convertCountryCode = function(country){
+            switch (country){
+                case 'ROC': return 'RUS'
+                default: return country
+            }
+        }
+        return {
+            "ID": convertCountryCode(data['Country Code']),
+            "Order": data.Order,
+            "Country": data.Country,
+            "Gold": parseFloat(data.Gold),
+            "Silver": parseFloat(data.Silver),
+            "Bronze": parseFloat(data.Bronze),
+            "Total": parseFloat(data.Total),
+            "Order by Total": data["Order by Total"],
+        }
+    });
+    file.then(function(data) {
+        // Define and plot svg
+        var margin = {top: 30, right: 30, bottom: 70, left: 60},
+        width = 1000 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+        var svg = d3.select("#q6_plot")
+            .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+        
+        // Projection of geomap plot.
+        var projection = d3.geoNaturalEarth()
+        .scale(width / 2 / Math.PI)
+        .translate([width / 2, height / 2])
+                  
+        // Define geo path
+        const path = d3.geoPath().projection(projection);
+
+        // Set color scale for choropleth
+        var colors = d3.scaleThreshold()
+        .domain([1,2,3,7,14,17,25,27,32,37])
+        .range(["#C0C0C0","#81badb","#6badd5","#57a0ce","#4391c6","#3282bd","#2270b3","#1662a9","#0d5299","#083d7f","#08306b"]);
+
+        // Define tooltip
+        var tooltip=d3.select('#q6_plot').append("div").attr("style", "position: absolute")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "2px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style('font-size', '12px')
+        .style('margin', '5px')
+
+        // Load the data up for choropleth
+        Promise.all([
+            d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"),
+          data
+        ]).then( d => drawMap(null, d[0], d[1]));
+
+        function drawMap(error, data, medals){
+            svg.append("g").selectAll("path").data(data.features).enter().append("path")
+            // Geo path to generate countries on map.
+            .attr("d", d3.geoPath().projection(projection))
+            // Register tooltip on mousing over, on and out.
+            .on('mouseover', (e,d) => {
+                tooltip.transition().duration(100).style('opacity',0.9);
+                var value = medals.find((m) => m.ID == d.id)
+                var country = data.features.find((m) => m.id == d.id).properties.name
+                // No olympics data, 0 medals earned.
+                if (typeof value == 'undefined'){
+                    totalMedals = 0
+                    tooltip.html(country + ': ' + totalMedals + ' total medals.')
+                    .style('left',e.pageX+'px').style('top',e.pageY+'px')
+                }
+                else{
+                    totalMedals = value.Total
+                    tooltip.html('<b><center>' + country + '</b></center>' + 'Total: ' + totalMedals + '<br> Gold 🥇: ' + value.Gold
+                     + '<br> Silver 🥈: ' + value.Silver + '<br> Bronze 🥉: ' + value.Bronze) 
+                    .style('left',e.pageX+'px').style('top',e.pageY+'px')
+                }
+            })
+            .on('mousemove', (e,d) => {
+                tooltip.transition().duration(100).style('opacity',0.9);
+                var value = medals.find((m) => m.ID == d.id)
+                var country = data.features.find((m) => m.id == d.id).properties.name
+                // No olympics data, 0 medals earned.
+                if (typeof value == 'undefined'){
+                    totalMedals = 0
+                    tooltip.html(country + ': ' + totalMedals + ' total medals.')
+                    .style('left',e.pageX+'px').style('top',e.pageY+'px')
+                }
+                else{
+                    totalMedals = value.Total
+                    tooltip.html('<b><center>' + country + '</b></center>' + 'Total: ' + totalMedals + '<br> Gold 🥇: ' + value.Gold
+                    + '<br> Silver 🥈: ' + value.Silver + '<br> Bronze 🥉: ' + value.Bronze) 
+                   .style('left',e.pageX+'px').style('top',e.pageY+'px')
+                }
+            })
+            .on('mouseout', (e,d) => {
+                tooltip.transition().duration(100).style('opacity',0);
+            })
+            // Fill based on number of medals won.
+            .attr('fill', d => {
+            value = medals.find((m) => m.ID == d.id)
+            // If no data in olympics data set, country did not earn any medals.
+            if (typeof value == 'undefined'){
+                totalMedals = 0
+            }
+            else{
+                totalMedals = value.Total
+            }
+            return colors(totalMedals)
+            })
+    
+        }
+
+    })
+    
 }
 
 
