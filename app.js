@@ -595,7 +595,7 @@ var question6 = function(filePath){
         .style("border-radius", "5px")
         .style("padding", "5px")
         .style('font-size', '12px')
-        .style('margin', '5px')
+        //.style('margin', '5px')
 
         // Load the data up for choropleth
         Promise.all([
@@ -620,9 +620,9 @@ var question6 = function(filePath){
                 }
                 else{
                     totalMedals = value.Total
-                    tooltip.html('<b><center>' + country + '</b></center>' + 'Total: ' + totalMedals + '<br> Gold 🥇: ' + value.Gold
-                     + '<br> Silver 🥈: ' + value.Silver + '<br> Bronze 🥉: ' + value.Bronze) 
-                    .style('left',e.pageX+'px').style('top',e.pageY+'px')
+                    tooltip.html('<b><center>' + country + '</center></b>' + 'Total: ' + totalMedals + '<br> Gold ' +  String.fromCodePoint(0x1F947) + ': ' + value.Gold
+                    + '<br> Silver ' + String.fromCodePoint(0x1F948)+ ': ' + value.Silver + '<br> Bronze ' + String.fromCodePoint(0x1F949) + ': '+  value.Bronze) 
+                   .style('left',e.pageX+'px').style('top',e.pageY+'px')
                 }
             })
             .on('mousemove', (e,d) => {
@@ -637,8 +637,8 @@ var question6 = function(filePath){
                 }
                 else{
                     totalMedals = value.Total
-                    tooltip.html('<b><center>' + country + '</b></center>' + 'Total: ' + totalMedals + '<br> Gold 🥇: ' + value.Gold
-                    + '<br> Silver 🥈: ' + value.Silver + '<br> Bronze 🥉: ' + value.Bronze) 
+                    tooltip.html('<b><center>' + country + '</center></b>' + 'Total: ' + totalMedals + '<br> Gold ' +  String.fromCodePoint(0x1F947) + ': ' + value.Gold
+                    + '<br> Silver ' + String.fromCodePoint(0x1F948)+ ': ' + value.Silver + '<br> Bronze ' + String.fromCodePoint(0x1F949) + ': '+  value.Bronze) 
                    .style('left',e.pageX+'px').style('top',e.pageY+'px')
                 }
             })
