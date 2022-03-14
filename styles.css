@@ -1,0 +1,15 @@
+div.tooltip{
+    position: absolute;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    background: white;
+    padding: 10px;
+}
+.swatch {
+    width: 12px;
+    height: 12px;
+    float: left;
+    margin-top: 3px;
+    margin-right: 4px;
+  }
