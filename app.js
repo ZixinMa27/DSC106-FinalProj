@@ -12,7 +12,6 @@ function final_proj() {
     question6(filePath2);
 }
 
-
 //take a look for the dataset 
 var question0 = function (filePath) {
     const file = d3.csv(filePath);
@@ -75,21 +74,79 @@ var question1 = function (filePath, filePath2) {
                 .range([0, width])
                 .domain([0, d3.max(athletes_medals, function (d) { return d.Athletes; }) + 10])
 
-            svg.append("g")
+            var xAxis = svg.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
+                .attr('id', 'xAxis')
 
+            
 
+            // Add brush + zoom feature to this plot.
+            var brush = d3.brush().extent([[0,0], [width, height]]).on('end', function(e, d){
+                // See if selection occured.
+                if (!e.selection) {
+                    if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+                    // Set old original x and y axes domains
+                    x.domain(d3.extent(athletes_medals, function (d) { return d.Athletes; })).nice();
+                    y.domain(d3.extent(athletes_medals, function (d) { return d.Medals; })).nice();
+                } else {
+                    // Update x and y axes domain
+                    x.domain([e.selection[0][0], e.selection[1][0]].map(x.invert, x));
+                    y.domain([e.selection[1][1], e.selection[0][1]].map(y.invert, y));
+                    scatter.select(".brush").call(brush.move, null);
+                }
+                // Update axis
+                xAxis.transition().duration(1000).call(d3.axisBottom(x))
+                yAxis.transition().duration(1000).call(d3.axisLeft(y))
+                // Update scatter plot.
+                scatter.selectAll('.dots').transition().duration(1000)
+                .attr("cx", function (d) { return x(d.Athletes); })
+                .attr("cy", function (d) { return y(d.Medals); })
+            }), idleTimeout, idleDelay = 350;
+            // Add clipping for brush.
+            var clip = svg.append("defs").append("svg:clipPath")
+                .attr("id", "clip")
+                .append("svg:rect")
+                .attr("width", width )
+                .attr("height", height )
+                .attr("x", 0) 
+                .attr("y", 0); 
+
+            // Define scatter plot specifically, use clips for brush.
+            var scatter = svg.append("g")
+             .attr("id", "scatterplot")
+             .attr("clip-path", "url(#clip)");
+
+            // Append brush to scatterplot.
+            scatter.append("g")
+             .attr("class", "brush")
+             .call(brush);
+
+            // Brush idle handler
+            function idled() {
+                idleTimeout = null;
+            }
+
+            // Add title
+            svg.append("text")
+                .attr("x", (width / 2))             
+                .attr("y", 0 - (margin.top / 2))
+                .attr("text-anchor", "middle")  
+                .style("font-size", "16px") 
+                .style("text-decoration", "underline")  
+                .text("Number of Athletes vs Number of Medals");
+                
             // Add Y axis
             var y = d3.scaleLinear()
                 .domain([0, d3.max(athletes_medals, function (d) { return d.Medals; }) + 5])
                 .range([height, 0]);
 
-            svg.append("g")
+            var yAxis = svg.append("g")
                 .attr("class", "myYaxis")
-                .call(d3.axisLeft(y));
+                .call(d3.axisLeft(y))
+                .attr('id', 'yAxis');
 
-            svg.append('g')
+            scatter.append('g')
                 .selectAll("circle")
                 .data(athletes_medals)
                 .enter()
@@ -97,6 +154,7 @@ var question1 = function (filePath, filePath2) {
                 .attr("cx", function (d) { return x(d.Athletes); })
                 .attr("cy", function (d) { return y(d.Medals); })
                 .attr("r", 3)
+                .attr('class', 'dots')
                 .style("fill", "#69b3a2")
                 .style("opacity", 0.7)
                 .on("mouseover", (e, d) => {
@@ -111,7 +169,8 @@ var question1 = function (filePath, filePath2) {
 
                 })
                 .on("mouseout", (d) => {
-                    tooltip.transition().duration(100).style("opacity", 0);
+                    tooltip.transition().duration(0).style("opacity", 0);
+                    tooltip.style('left', '1000px').style('right', '1000px')
                 })
 
             // Add X axis label:
@@ -131,6 +190,7 @@ var question1 = function (filePath, filePath2) {
 
         });
 
+    
 
 
     });
@@ -169,6 +229,16 @@ var question2 = function (filePath) {
             .append("g")
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
+
+        // Add title
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Number of Athletes in Each Sport");
+
 
         data.sort(function (b, a) {
             return a.Total - b.Total;
@@ -266,6 +336,14 @@ var question3 = function (filePath) {
         // List of groups = species here = value of the first column called group -> I show them on the X axis
         var groups = d3.map(data, function (d) { return (d.Country) })
 
+        // Add title
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Number of Bronze, Silver, Gold Medals Per Country");
 
         // Add X axis
         var x = d3.scaleBand()
@@ -403,6 +481,15 @@ var question4 = function (filePath, filePath2) {
 
         var svg = d3.select("#q4_plot").append("svg").attr("width", width).attr("height", height);
         //svg.append('text').attr('text-anchor', 'middle').text('Streamgraph of medal counts for top 10 countries')
+        // Add title
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 50)
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Medal Counts Per Day Per Country");
+
         var tooltip = d3.select("#q4_plot")
             .append("div")
             .attr("class", "tooltip")
@@ -503,6 +590,15 @@ var question5 = function (filePath) {
             // var x = d3.scaleTime().domain().range([margin, width-margin])
             var y = d3.scaleLinear().domain([min - 5, max + 5]).range([height - margin, margin])
 
+            // Add title
+            svg.append("text")
+                .attr("x", (width / 2))             
+                .attr("y", 50)
+                .attr("text-anchor", "middle")  
+                .style("font-size", "16px") 
+                .style("text-decoration", "underline")  
+                .text("Distribution of Ages of Athletes");
+
             // var x_axis = d3.axisBottom(x).ticks(dates.length)
             var y_axis = d3.axisLeft(y)
             svg.append('g').attr('transform', `translate(${margin},0)`).call(y_axis).append("text").attr('text-anchor', "end");
@@ -579,6 +675,15 @@ var question6 = function(filePath){
                   
         // Define geo path
         const path = d3.geoPath().projection(projection);
+
+        // Add title
+        svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px") 
+            .style("text-decoration", "underline")  
+            .text("Choropleth Map of Medals Won In Beijing 2022 Olympics");
 
         // Set color scale for choropleth
         var colors = d3.scaleThreshold()
