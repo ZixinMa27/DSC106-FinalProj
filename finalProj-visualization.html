@@ -20,7 +20,11 @@
     <div>
     <h3>Task 1:</h3>
         <div> Explore the relationship between the numbers of athletes by countries and the numbers of medals by countries -> scatter plot
-            <br> Uses Brush + Zoom feature! Click and drag to zoom in on a specific area of scatter plot. Double-Click to get back to original data!
+            <br> Interactivity: (not learn in class)Uses Brush + Zoom feature! Click and drag to zoom in on a specific area of scatter plot. Double-Click to get back to original data; Tooltips to display data on hover
+            <br> Color Scheme Used: Only one color used here (green/teal).
+            <br> Marks: Points(each data)
+            <br> Channels: Position(x-axis and y-axis)
+
         </div>
     <div id="q1">
         </div>
@@ -33,6 +37,10 @@
     <div>
     <h3>Task 2:</h3>
         <div>  Explore the numbers of athletes in each discipline -> bar plot
+            <br> interactivity: animation when the barplot is loading; zoom-in and zoom-out; Tooltips to display data on hover
+            <br> Color Scheme Used: Categorical Color Scheme (one color for each sport)
+            <br> Marks: Lines(each sport)
+            <br> Channels: Color(each sport), length(number of medals)
         </div>
     
     <div id="q2">
@@ -40,12 +48,19 @@
         </div>
         <h4>Plot:</h4>
         <div id="q2_plot" class="center_plot">
+            
+            
         </div>
+
     </div>    
     
     <div>
     <h3>Task 3:</h3>
         <div> Explore the numbers of Gold, Silver, Bronze medals by countries -> stacked bar graph
+            <br> interactivity: Tooltips to display data on hover
+            <br> Color Scheme Used: Categorical Color Scheme (Gold, Silver, Bronze)
+            <br> Marks: Lines(each country)
+            <br> Channels: Color(medals category), length(number of medals)
         </div>
     <div id="q3">
     
@@ -58,6 +73,7 @@
     <div>
     <h3>Task 4:</h3>
         <div> Explore the number of medals per country by day for the top 10 countries in the Olympics -> streamgraph
+            <br> interactivity: Tooltips to display data on hover
             <br> Color Scheme Used: Categorical Color Scheme (one color for each country)
             <br> Marks: Areas for each country.
             <br> Channels: Color to represent different countries. Areas to represent amount of medals won.
@@ -74,6 +90,7 @@
     <div>
     <h3>Task 5:</h3>
         <div> Explore the ages of athletes ->box plot
+            <br> interactivity: using botton to change gender(male or female)
             <br> Color Scheme Used: Only one color used here (green/teal).
             <br> Marks: Lines for whiskers of box plot. Areas for the bodies of box plot.
             <br> Channels: Position for lines determines upper and lower bound of ages. Areas to represent interquartile range.
@@ -95,8 +112,9 @@
 
     <div>
     <h3>Task 6:</h3>
-        <div> (Extra Credit) Explore the distributions of gold medals across countries -> geomap-based plot,
+        <div> (Extra Credit) Explore the distributions of medals across countries -> geomap-based plot,
              a choropleth plot. 
+             <br> interactivity: Tooltips to display data on hover
              <br> Color Scheme Used: Monochromatic color scheme, hues of blue. Each darker shade of blue represents more.
              <br> Marks: Areas represent each country. Lines to represent borders between countries.
              <br> Channels: Color (shade of blue) to represent how many medals a country has won.

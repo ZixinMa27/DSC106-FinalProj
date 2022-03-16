@@ -51,6 +51,7 @@ var question1 = function (filePath, filePath2) {
                 width = 460 - margin.left - margin.right,
                 height = 400 - margin.top - margin.bottom;
 
+            // add tooltip  
             var tooltip = d3.select('#q1_plot').append("div").attr("style", "position: absolute")
                 .style("opacity", 0)
                 .attr("class", "tooltip")
@@ -202,7 +203,7 @@ var question2 = function (filePath) {
             ? null
             : {
                 "Discipline": data.Discipline,
-                "F": data.Discipline,
+                "F": data.F,
                 "M": data.M,
                 "Total": parseFloat(data.Total)
             }
@@ -220,8 +221,16 @@ var question2 = function (filePath) {
             .style("border-width", "2px")
             .style("border-radius", "5px")
             .style("padding", "5px")
-
-        // append the svg object to the body of the page
+        
+        
+        data.sort(function(a, b){
+            
+                return b.Total - a.Total
+        })
+        var myColor = d3.scaleOrdinal().domain(data).range(d3.schemeSet3)
+    
+    
+        // append the svg
         var svg = d3.select("#q2_plot")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
@@ -238,11 +247,6 @@ var question2 = function (filePath) {
             .style("font-size", "16px") 
             .style("text-decoration", "underline")  
             .text("Number of Athletes in Each Sport");
-
-
-        data.sort(function (b, a) {
-            return a.Total - b.Total;
-        });
 
         // X axis
         var x = d3.scaleBand()
@@ -265,29 +269,48 @@ var question2 = function (filePath) {
             .call(d3.axisLeft(y));
 
         // Bars
-        svg.selectAll("rect")
+        svg.selectAll(".bar")
             .data(data)
             .enter()
             .append("rect")
+            .attr("class", "bar")
             .attr("x", function (d) { return x(d.Discipline); })
             .attr("y", function (d) { return y(d.Total); })
             .attr("width", x.bandwidth())
-            .attr("height", function (d) { return height - y(d.Total); })
+            .attr("height", function(d) { return height - y(0); }) 
+            .attr("y", function(d) { return y(0); })
+            //.attr("height", function (d) {return height - y(d.Total); })
             .attr("fill", "#69b3a2")
             .on("mouseover", (e, d) => {
                 tooltip.transition().duration(100).style("opacity", 0.9);
                 tooltip.html("Number of " + d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
-
             })
             .on("mousemove", (e, d) => {
-
                 tooltip.transition().duration(100).style("opacity", 0.9);
                 tooltip.html("Number of " + d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
-
             })
             .on("mouseout", (d) => {
                 tooltip.transition().duration(100).style("opacity", 0);
             })
+            .attr("fill", function (d){ return myColor(d) });
+
+
+        //add zoom-in and -out capability
+        var zoomBar = d3.zoom()
+                    .on("zoom", function(e, d){
+                        svg.attr("transform", e.transform)
+                    })
+        svg.call(zoomBar) 
+        
+        svg.selectAll("rect")
+            .transition()
+            .duration(800)
+            .attr("y", function(d) { return y(d.Total); })
+            .attr("height", function(d) { return height - y(d.Total); })
+            .delay(function(d,i){ return(i*100)})
+
+
+
     })
 }
 
@@ -311,13 +334,7 @@ var question3 = function (filePath) {
             colorarray = ["red", "silver", "bronze"];
             return colorarray[i];
         }
-
-        //stack secondary Key values
-        //var stack = d3.stack().keys(["Gold", "Silver", "Bronze"]);
-        //var series = stack(year_count);
-
-        // plotting stacked bar chart
-
+        
         var margin = { top: 30, right: 30, bottom: 70, left: 60 },
             width = 1000 - margin.left - margin.right,
             height = 500 - margin.top - margin.bottom;
@@ -333,7 +350,7 @@ var question3 = function (filePath) {
 
         var subgroups = data.columns.slice(2, 5)
 
-        // List of groups = species here = value of the first column called group -> I show them on the X axis
+        // List of groups
         var groups = d3.map(data, function (d) { return (d.Country) })
 
         // Add title
@@ -372,7 +389,7 @@ var question3 = function (filePath) {
             .domain(subgroups)
             .range(['#FFD700', '#C0C0C0', '#b08d57'])
 
-        //stack the data? --> stack per subgroup
+        //stack per subgroup
         var stackedData = d3.stack()
             .keys(subgroups)
             (data)
@@ -387,19 +404,12 @@ var question3 = function (filePath) {
             .style("border-radius", "5px")
             .style("padding", "5px")
 
-
-
-
-
-        // Show the bars
         svg.append("g")
             .selectAll("g")
-            // Enter in the stack data = loop key per key = group per group
             .data(stackedData)
             .enter().append("g")
             .attr("fill", function (d) { return color(d.key); })
             .selectAll("rect")
-            // enter a second time = loop subgroup per subgroup to add all rectangles
             .data(function (d) { return d; })
             .enter().append("rect")
             .attr("x", function (d) { return x(d.data.Country); })
@@ -412,14 +422,22 @@ var question3 = function (filePath) {
 
             })
             .on("mousemove", (e, d) => {
-
                 tooltip.transition().duration(100).style("opacity", 0.9);
                 tooltip.html(d[1] + " medals").style("left", e.pageX + "px").style("top", e.pageY + "px");
-
             })
             .on("mouseout", (d) => {
                 tooltip.transition().duration(100).style("opacity", 0);
             })
+
+        var legend = d3.legendColor()
+        .scale(color);
+
+        svg.append("g")
+        .attr("transform", "translate(750,45)")
+        .call(legend);
+
+
+        
 
 
     })
@@ -445,7 +463,6 @@ var question4 = function (filePath, filePath2) {
     }
 
     var medals = d3.csv(filePath, rowConverter)
-
     medals.then(function (data) {
         const unique = (value, index, self) => {
             return self.indexOf(value) === index
@@ -476,7 +493,7 @@ var question4 = function (filePath, filePath2) {
         })
 
         var height = 800;
-        var width = 1300;
+        var width = 1100;
         var margin = 50;
 
         var svg = d3.select("#q4_plot").append("svg").attr("width", width).attr("height", height);
@@ -549,6 +566,13 @@ var question4 = function (filePath, filePath2) {
                     .attr("stroke-width", "0px")
                 tooltip.style("visibility", "hidden");
             })
+
+        var legend = d3.legendColor()
+                .scale(color);
+    
+        svg.append("g")
+        .attr("transform", "translate(750,45)")
+        .call(legend);
     })
 }
 
