@@ -160,13 +160,13 @@ var question1 = function (filePath, filePath2) {
                 .style("opacity", 0.7)
                 .on("mouseover", (e, d) => {
                     tooltip.transition().duration(100).style("opacity", 0.9);
-                    tooltip.html("Country " + d.Countries + " has " + d.Athletes + " athletes participated and won " + d.Medals + " medals").style("left", e.pageX + "px").style("top", e.pageY + "px");
+                    tooltip.html(d.Countries + " had " + d.Athletes + " athletes that participated and won " + d.Medals + " medals").style("left", e.pageX + "px").style("top", e.pageY + "px");
 
                 })
                 .on("mousemove", (e, d) => {
 
                     tooltip.transition().duration(100).style("opacity", 0.9);
-                    tooltip.html("Country " + d.Countries + " has " + d.Athletes + " athletes participated and won " + d.Medals + " medals").style("left", e.pageX + "px").style("top", e.pageY + "px");
+                    tooltip.html(d.Countries + " had " + d.Athletes + " athletes that participated and won " + d.Medals + " medals").style("left", e.pageX + "px").style("top", e.pageY + "px");
 
                 })
                 .on("mouseout", (d) => {
@@ -283,11 +283,11 @@ var question2 = function (filePath) {
             .attr("fill", "#69b3a2")
             .on("mouseover", (e, d) => {
                 tooltip.transition().duration(100).style("opacity", 0.9);
-                tooltip.html("Number of " + d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
+                tooltip.html(d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
             })
             .on("mousemove", (e, d) => {
                 tooltip.transition().duration(100).style("opacity", 0.9);
-                tooltip.html("Number of " + d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
+                tooltip.html(d.Total + " athletes participated in " + d.Discipline).style("left", e.pageX + "px").style("top", e.pageY + "px");
             })
             .on("mouseout", (d) => {
                 tooltip.transition().duration(100).style("opacity", 0);
@@ -309,7 +309,20 @@ var question2 = function (filePath) {
             .attr("height", function(d) { return height - y(d.Total); })
             .delay(function(d,i){ return(i*100)})
 
+            // Add X axis label:
+        svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width / 2 + margin.left)
+                .attr("y", height + margin.top + 35)
+                .text("Discipline");
 
+            // Y axis label:
+        svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 10)
+                .attr("x", -margin.top - height / 2 + 80)
+                .text("Number of Athletes")
 
     })
 }
@@ -436,7 +449,19 @@ var question3 = function (filePath) {
         .attr("transform", "translate(750,45)")
         .call(legend);
 
+        svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width / 2 + margin.left)
+                .attr("y", height + margin.top + 35)
+                .text("Country");
 
+            // Y axis label:
+        svg.append("text")
+                .attr("text-anchor", "end")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -margin.left + 10)
+                .attr("x", -margin.top - height / 2 + 80)
+                .text("Number of Medals Won")
         
 
 
@@ -573,6 +598,21 @@ var question4 = function (filePath, filePath2) {
         svg.append("g")
         .attr("transform", "translate(750,45)")
         .call(legend);
+
+        svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", width / 2)
+        .attr("y", height - 5)
+        .text("Day");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", (height / 2) - 380)
+        .attr("x", -275)
+        .text("Number of Medals Won")
+
     })
 }
 
@@ -655,6 +695,14 @@ var question5 = function (filePath) {
             draw_box(data_by_gender)
         })
 
+        // Y axis label:
+        svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", (height / 2) - 280)
+        .attr("x", -200)
+        .text("Age (in Years)")
+
 
     })
 }
@@ -723,7 +771,7 @@ var question6 = function(filePath){
         .style("border-width", "2px")
         .style("border-radius", "5px")
         .style("padding", "5px")
-        .style('font-size', '12px')
+        .style('font-size', '16px')
         //.style('margin', '5px')
 
         // Load the data up for choropleth
